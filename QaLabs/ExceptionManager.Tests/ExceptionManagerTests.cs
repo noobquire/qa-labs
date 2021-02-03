@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ExceptionManager.Interfaces;
 using NUnit.Framework;
 using Moq;
@@ -25,12 +24,7 @@ namespace ExceptionManager.Tests
         public void IsCriticalException_When_CriticalException_Returns_True()
         {
             var exception = new NullReferenceException();
-            _options.Setup(o => o.CriticalExceptionTypes)
-                .Returns(new List<string>()
-            {
-                exception.GetType().ToString()
-            });
-            _exceptionManager = new Implementations.ExceptionManager(_options.Object, _serverClient.Object);
+            SetupCriticalException(exception);
 
             var actual = _exceptionManager.IsCriticalException(exception);
 
@@ -50,17 +44,9 @@ namespace ExceptionManager.Tests
         [Test]
         public void IsCriticalException_When_ExceptionNull_Returns_False()
         {
-            Exception exception = null;
-            _options.Setup(o => o.CriticalExceptionTypes)
-                .Returns(new List<string>()
-                {
-                    typeof(NullReferenceException).ToString()
-                });
-            _exceptionManager = new Implementations.ExceptionManager(_options.Object, _serverClient.Object);
+            SetupCriticalException(new NullReferenceException());
 
-            
-
-            var actual = _exceptionManager.IsCriticalException(exception);
+            var actual = _exceptionManager.IsCriticalException(null);
 
             Assert.IsFalse(actual);
         }
@@ -74,6 +60,51 @@ namespace ExceptionManager.Tests
 
             Assert.IsFalse(actual);
         }
-        
+
+        [Test]
+        public void HandleException_When_CriticalException_Increments_CriticalExceptionCount()
+        {
+            var exception = new NullReferenceException();
+            SetupCriticalException(exception);
+            var expectedCount = 1;
+
+            _exceptionManager.HandleException(exception);
+            var actualCount = _exceptionManager.CriticalExceptionCount;
+
+            Assert.AreEqual(expectedCount, actualCount);
+        }
+
+        [Test]
+        public void HandleException_When_NonCriticalException_Increments_ExceptionCount()
+        {
+            var exception = new ApplicationException();
+            var expectedCount = 1;
+
+            _exceptionManager.HandleException(exception);
+            var actualCount = _exceptionManager.ExceptionCount;
+
+            Assert.AreEqual(expectedCount, actualCount);
+        }
+
+        [Test]
+        public void HandleException_When_ExceptionNull_Counters_NotIncremented()
+        {
+            _exceptionManager.HandleException(null);
+            var actualCount = _exceptionManager.ExceptionCount;
+            var actualCriticalCount = _exceptionManager.CriticalExceptionCount;
+            
+            Assert.AreEqual(0, actualCriticalCount);
+            Assert.AreEqual(0, actualCount);
+        }
+
+        private void SetupCriticalException(Exception exception)
+        {
+            _options.Setup(o => o.CriticalExceptionTypes)
+                .Returns(new List<string>()
+                {
+                    exception.GetType().ToString()
+                });
+            _exceptionManager = new Implementations.ExceptionManager(_options.Object, _serverClient.Object);
+        }
     }
 }

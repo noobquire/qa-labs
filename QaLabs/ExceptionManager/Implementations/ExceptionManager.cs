@@ -31,6 +31,10 @@ namespace ExceptionManager.Implementations
 
         public void HandleException(Exception exception)
         {
+            if (exception is null)
+            {
+                return;
+            }
             if(IsCriticalException(exception))
             {
                 _serverClient.SendExceptionData(exception);
