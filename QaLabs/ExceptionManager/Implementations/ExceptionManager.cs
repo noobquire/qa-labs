@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using ExceptionManager.Interfaces;
 
-namespace ExceptionManager
+namespace ExceptionManager.Implementations
 {
-    public class ExceptionManager
+    public class ExceptionManager : IExceptionManager
     {
         public int CriticalExceptionCount { get; private set; }
 
         public int ExceptionCount { get; private set; }
-
+        
         private readonly List<Type> _criticalExceptionTypes;
+        private readonly IServerClient _serverClient;
 
-        public ExceptionManager()
+        public ExceptionManager(ExceptionManagerOptions options, IServerClient serverClient)
         {
-            _criticalExceptionTypes = new List<Type>()
-            {
-                typeof(IndexOutOfRangeException),
-                typeof(NullReferenceException),
-                typeof(InvalidCastException),
-            };
+            _criticalExceptionTypes = options.CriticalExceptionTypes.Select(Type.GetType).ToList();
+            _serverClient = serverClient;
         }
 
         public bool IsCriticalException(Exception exception)
@@ -30,6 +29,7 @@ namespace ExceptionManager
         {
             if(IsCriticalException(exception))
             {
+                _serverClient.SendExceptionData(exception);
                 CriticalExceptionCount++;
             }
             else
