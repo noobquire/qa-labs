@@ -16,13 +16,17 @@ namespace ExceptionManager.Implementations
 
         public ExceptionManager(ExceptionManagerOptions options, IServerClient serverClient)
         {
-            _criticalExceptionTypes = options.CriticalExceptionTypes.Select(Type.GetType).ToList();
+            _criticalExceptionTypes = options?.CriticalExceptionTypes?.Select(Type.GetType).ToList();
             _serverClient = serverClient;
         }
 
         public bool IsCriticalException(Exception exception)
         {
-            return _criticalExceptionTypes.Contains(exception.GetType());
+            if (exception is null)
+            {
+                return false;
+            }
+            return _criticalExceptionTypes?.Contains(exception.GetType()) ?? false;
         }
 
         public void HandleException(Exception exception)

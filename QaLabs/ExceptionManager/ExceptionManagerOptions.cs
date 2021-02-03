@@ -6,6 +6,6 @@ namespace ExceptionManager
 {
     public class ExceptionManagerOptions
     {
-        public List<string> CriticalExceptionTypes { get; set; }
+        public virtual List<string> CriticalExceptionTypes { get; set; }
     }
 }
