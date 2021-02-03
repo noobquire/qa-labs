@@ -35,7 +35,8 @@ namespace ExceptionManager
             services.AddSingleton(managerOptions);
 
             services.AddScoped<IExceptionManager, Implementations.ExceptionManager>();
-            services.AddScoped<IServerClient, DummyServerClient>();
+            services.AddScoped<IServerClient, ServerClient>();
+            services.AddScoped<IWebClient, DummyWebClient>();
 
             services.AddSingleton<App>();
         }
