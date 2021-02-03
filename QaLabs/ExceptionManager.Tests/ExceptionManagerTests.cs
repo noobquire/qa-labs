@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using ExceptionManager.Implementations;
 using ExceptionManager.Interfaces;
 using NUnit.Framework;
 using Moq;
@@ -18,27 +21,6 @@ namespace ExceptionManager.Tests
             _serverClient = new Mock<IServerClient>();
             _options = new Mock<ExceptionManagerOptions>();
             _exceptionManager = new Implementations.ExceptionManager(_options.Object, _serverClient.Object);
-        }
-
-        [Test]
-        public void IsCriticalException_When_CriticalException_Returns_True()
-        {
-            var exception = new NullReferenceException();
-            SetupCriticalException(exception);
-
-            var actual = _exceptionManager.IsCriticalException(exception);
-
-            Assert.IsTrue(actual);
-        }
-
-        [Test]
-        public void IsCriticalException_When_NonCriticalException_Returns_False()
-        {
-            var exception = new ApplicationException();
-
-            var actual = _exceptionManager.IsCriticalException(exception);
-
-            Assert.IsFalse(actual);
         }
 
         [Test]
@@ -92,19 +74,41 @@ namespace ExceptionManager.Tests
             _exceptionManager.HandleException(null);
             var actualCount = _exceptionManager.ExceptionCount;
             var actualCriticalCount = _exceptionManager.CriticalExceptionCount;
-            
+
             Assert.AreEqual(0, actualCriticalCount);
             Assert.AreEqual(0, actualCount);
         }
 
-        private void SetupCriticalException(Exception exception)
+        [TestCase(typeof(NullReferenceException), true)]
+        [TestCase(typeof(InvalidCastException), true)]
+        [TestCase(typeof(HttpRequestException), false)]
+        [TestCase(typeof(ApplicationException), false)]
+        [TestCase(typeof(WebClientException), false)]
+        [TestCase(typeof(Exception), false)]
+        public void IsCriticalException_When_Exception_Expected(Type exceptionType, bool expected)
+        {
+            SetupCriticalExceptions(new Exception[]
+            {
+                new NullReferenceException(),
+                new InvalidCastException()
+            });
+            var exception = (Exception)Activator.CreateInstance(exceptionType);
+
+            var actual = _exceptionManager.IsCriticalException(exception);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        private void SetupCriticalExceptions(IEnumerable<Exception> exceptions)
         {
             _options.Setup(o => o.CriticalExceptionTypes)
-                .Returns(new List<string>()
-                {
-                    exception.GetType().ToString()
-                });
+                .Returns(exceptions.Select(e => e.GetType().ToString()).ToList());
             _exceptionManager = new Implementations.ExceptionManager(_options.Object, _serverClient.Object);
+        }
+
+        private void SetupCriticalException(Exception exception)
+        {
+            SetupCriticalExceptions(new[] { exception });
         }
     }
 }
