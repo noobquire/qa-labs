@@ -1,8 +1,5 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using ExceptionManager.Interfaces;
+﻿using ExceptionManager.Interfaces;
+using System;
 
 namespace ExceptionManager.Implementations
 {

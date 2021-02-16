@@ -1,7 +1,7 @@
-﻿using System;
+﻿using ExceptionManager.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExceptionManager.Interfaces;
 
 namespace ExceptionManager.Implementations
 {

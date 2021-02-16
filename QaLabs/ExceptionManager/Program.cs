@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ExceptionManager
 {
-    class Program
+    static class Program
     {
         static void Main()
         {
