@@ -10,15 +10,17 @@ namespace ExceptionManager.Implementations
         public int CriticalExceptionCount { get; private set; }
 
         public int ExceptionCount { get; private set; }
-        
-        private readonly List<Type> _criticalExceptionTypes;
-        private readonly IServerClient _serverClient;
 
-        public ExceptionManager(ExceptionManagerOptions options, IServerClient serverClient)
+        public ExceptionManagerOptions Options
         {
-            _criticalExceptionTypes = options?.CriticalExceptionTypes?.Select(Type.GetType).ToList();
-            _serverClient = serverClient;
+            set
+            {
+                _criticalExceptionTypes = value?.CriticalExceptionTypes?.Select(Type.GetType).ToList();
+            }
         }
+        private List<Type> _criticalExceptionTypes;
+        public List<Type> CriticalExceptionTypes { get; set; }
+        public IServerClient _serverClient { get; set; }
 
         public bool IsCriticalException(Exception exception)
         {

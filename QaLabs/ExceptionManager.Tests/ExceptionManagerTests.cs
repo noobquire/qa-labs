@@ -20,7 +20,11 @@ namespace ExceptionManager.Tests
         {
             _serverClient = new Mock<IServerClient>();
             _options = new Mock<ExceptionManagerOptions>();
-            _exceptionManager = new Implementations.ExceptionManager(_options.Object, _serverClient.Object);
+            _exceptionManager = new Implementations.ExceptionManager()
+            {
+                _serverClient = _serverClient.Object,
+                Options = _options.Object
+            };
         }
 
         [Test]
@@ -103,7 +107,7 @@ namespace ExceptionManager.Tests
         {
             _options.Setup(o => o.CriticalExceptionTypes)
                 .Returns(exceptions.Select(e => e.GetType().ToString()).ToList());
-            _exceptionManager = new Implementations.ExceptionManager(_options.Object, _serverClient.Object);
+            _exceptionManager.Options = _options.Object;
         }
 
         private void SetupCriticalException(Exception exception)

@@ -16,7 +16,10 @@ namespace ExceptionManager.Tests
         public void Setup()
         {
             _webClient = new Mock<IWebClient>();
-            _serverClient = new ServerClient(_webClient.Object);
+            _serverClient = new ServerClient()
+            {
+                Client = _webClient.Object
+            };
         }
 
         [Test]
