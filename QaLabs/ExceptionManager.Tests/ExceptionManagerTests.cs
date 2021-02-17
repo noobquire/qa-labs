@@ -85,7 +85,7 @@ namespace ExceptionManager.Tests
         [TestCase(typeof(ApplicationException), false)]
         [TestCase(typeof(WebClientException), false)]
         [TestCase(typeof(Exception), false)]
-        public void IsCriticalException_When_Exception_Expected(Type exceptionType, bool expected)
+        public void IsCriticalException_When_Exception_Returns_Expected(Type exceptionType, bool expected)
         {
             SetupCriticalExceptions(new Exception[]
             {
