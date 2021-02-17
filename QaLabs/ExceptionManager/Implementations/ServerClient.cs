@@ -25,6 +25,7 @@ namespace ExceptionManager.Implementations
             {
                 Console.WriteLine($"An error occurred when sending data to the server");
                 ServerErrorCount++;
+                return false;
             }
             return true;
         }

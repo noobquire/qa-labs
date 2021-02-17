@@ -31,5 +31,24 @@ namespace ExceptionManager.Tests
 
             Assert.AreEqual(expectedErrorCount, actualErrorCount);
         }
+
+        [Test]
+        public void SendExceptionData_When_ErrorSendingData_Returns_False()
+        {
+            _webClient.Setup(c => c.SendData(It.IsAny<string>()))
+                .Throws<WebClientException>();
+
+            var actual = _serverClient.SendExceptionData(new ApplicationException());
+
+            Assert.IsFalse(actual);
+        }
+
+        [Test]
+        public void SendExceptionData_When_SuccessfullySentData_Returns_True()
+        {
+            var actual = _serverClient.SendExceptionData(new ApplicationException());
+
+            Assert.IsTrue(actual);
+        }
     }
 }
