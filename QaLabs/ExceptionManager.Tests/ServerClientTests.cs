@@ -50,5 +50,12 @@ namespace ExceptionManager.Tests
 
             Assert.IsTrue(actual);
         }
+
+        [Test]
+        public void SendExceptionData_When_SuccessfulCall_Invokes_WebClient_SendData()
+        {
+            _serverClient.SendExceptionData(new Exception());
+            _webClient.Verify(wc => wc.SendData(It.IsAny<string>()), Times.Once);
+        }
     }
 }
