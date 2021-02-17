@@ -11,12 +11,12 @@ namespace ExceptionManager.Implementations
         {
             _client = client;
         }
-        public int ServerErrorCount { get; private set; } = 0;
+        public int ServerErrorCount { get; private set; }
         public bool SendExceptionData(Exception exception)
         {
             try
             {
-                var message = $"Critical {exception.ToString()}: {exception.Message}" +
+                var message = $"Critical {exception}: {exception.Message}" +
                               $"\nStack trace: {exception.StackTrace}\n";
                 _client.SendData(message);
                 Console.WriteLine(message);
