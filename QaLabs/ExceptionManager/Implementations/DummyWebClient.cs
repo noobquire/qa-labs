@@ -5,6 +5,9 @@ namespace ExceptionManager.Implementations
 {
     public class DummyWebClient : IWebClient
     {
-        public void SendData(string data) { throw new NotImplementedException(); }
+        public void SendData(string data)
+        {
+            // Does nothing, actual implementation should send data to server
+        }
     }
 }
