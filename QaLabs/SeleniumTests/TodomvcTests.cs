@@ -32,18 +32,30 @@ namespace SeleniumTests
         {
             homepage.GoToPage();
             homepage.AddTask(taskName);
-            var result = homepage.GetAllTasks();
-            Assert.That(result.Select(t => t.Text).Contains(taskName));
+            var tasks = homepage.GetAllTasks();
+            Assert.That(tasks.Select(t => t.Text).Contains(taskName));
         }
 
         [TestCase("Task")]
+        [TestCase("Another task")]
         public void RemoveTodo(string taskName)
         {
             homepage.GoToPage();
             homepage.AddTask(taskName);
             homepage.DeleteTask(taskName);
-            var result = homepage.GetAllTasks();
-            Assert.That(!result.Any());
+            var tasks = homepage.GetAllTasks();
+            Assert.That(!tasks.Any());
+        }
+        
+        [TestCase("Some task")]
+        public void ChangeTodoStatus(string taskName)
+        {
+            homepage.GoToPage();
+            homepage.AddTask(taskName);
+            homepage.ChangeTaskStatus(taskName);
+            homepage.SwitchTab(Homepage.Tabs.Completed);
+            var tasks = homepage.GetAllTasks();
+            Assert.That(tasks.Any(t => t.Text.Contains(taskName)));
         }
     }
 }

@@ -50,7 +50,7 @@ namespace SeleniumTests
             var productName = driver.FindElements(By.ClassName("goods-tile__title")).First().Text;
 
             driver.FindElement(By.XPath("//button[@opencart]")).Click();
-            wait.Until(driver => driver.FindElement(By.ClassName("modal__heading")));
+            wait.Until(driver => driver.FindElement(By.ClassName("cart-product__body")));
             var productTitle = driver.FindElement(By.ClassName("cart-product__title"));
             productTitle.Text.Should().Contain(productName);
         }

@@ -38,23 +38,38 @@ namespace SeleniumTests.Pages
             var task = GetAllTasks().FirstOrDefault(t => t.Text == taskName);
             if (task != null)
             {
-                //IWebElement taskContainer = driver.FindElement(By.XPath($"//div[.//label[contains(text(),'{taskName}')]]"));
                 IWebElement deleteButton = driver.FindElement(By.XPath($"//div[.//label[contains(text(),'{taskName}')]]//button"));
-                Actions action = new Actions(driver);
-                action.MoveToElement(deleteButton);
-                deleteButton.Click();
+
+                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                js.ExecuteScript("arguments[0].click();", deleteButton);
             }
             else throw new ArgumentNullException(taskName);
         }
 
-        public void ChangeTaskStatus()
+        public void ChangeTaskStatus(string taskName)
         {
+            IWebElement taskStatusButton = driver.FindElement(By.XPath($"//div[.//label[contains(text(),'{taskName}')]]//input[@ng-change='toggleCompleted(todo)']"));
+            taskStatusButton.Click();
+        }
 
+        public void SwitchTab(Tabs tab)
+        {
+            IWebElement tabElement = tab switch
+            {
+                Tabs.All => driver.FindElement(By.XPath("//a[contains(text(), 'All')]")),
+                Tabs.Active => driver.FindElement(By.XPath("//a[contains(text(), 'Active')]")),
+                Tabs.Completed => driver.FindElement(By.XPath("//a[contains(text(), 'Completed')]")),
+            };
         }
 
         public IEnumerable<IWebElement> GetAllTasks()
         {
-            return driver.FindElements(By.ClassName("ng-binding"));
+            return driver.FindElements(By.XPath(@"//label[contains(@class, 'ng-binding')]"));
+        }
+
+        public enum Tabs
+        {
+            All, Active, Completed
         }
     }
 }
