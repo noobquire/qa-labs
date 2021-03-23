@@ -1,10 +1,9 @@
-﻿using System.Linq;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
-using FluentAssertions;
+using System.Linq;
 
 namespace SeleniumTests
 {
