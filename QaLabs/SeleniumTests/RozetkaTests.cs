@@ -30,7 +30,7 @@ namespace SeleniumTests
         }
 
         [TestCase("Дакимакура с Рикардо Милосом")]
-        [TestCase("javascript для детей")]
+        [TestCase("JavaScript для детей")]
         public void SearchAndAddProductToCart(string productQuery)
         {
             driver.Navigate().GoToUrl(homeURL);

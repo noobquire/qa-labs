@@ -22,37 +22,44 @@ namespace SeleniumTests.Pages
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
         }
 
-        public void GoToPage()
+        public Homepage GoToPage()
         {
             driver.Navigate().GoToUrl(homeUrl);
+            return this;
         }
 
-        public void AddTask(string taskName)
+        public Homepage AddTask(string taskName)
         {
             TodoInput.SendKeys(taskName);
             TodoInput.SendKeys(Keys.Enter);
+            return this;
         }
 
-        public void DeleteTask(string taskName)
+        public Homepage DeleteTask(string taskName)
         {
             var task = GetAllTasks().FirstOrDefault(t => t.Text == taskName);
             if (task != null)
             {
-                IWebElement deleteButton = driver.FindElement(By.XPath($"//div[.//label[contains(text(),'{taskName}')]]//button"));
-
-                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                js.ExecuteScript("arguments[0].click();", deleteButton);
+                var actions = new Actions(driver);
+                var selectedTask = GetAllTasks().First(t => t.Text.Contains(taskName));
+                var deleteButton = driver.FindElement(By.XPath($"//div[.//label[contains(text(),'{taskName}')]]//button"));
+                actions.MoveToElement(selectedTask);
+                actions.Click(deleteButton);
+                actions.Build().Perform();
             }
             else throw new ArgumentNullException(taskName);
+
+            return this;
         }
 
-        public void ChangeTaskStatus(string taskName)
+        public Homepage ChangeTaskStatus(string taskName)
         {
             IWebElement taskStatusButton = driver.FindElement(By.XPath($"//div[.//label[contains(text(),'{taskName}')]]//input[@ng-change='toggleCompleted(todo)']"));
             taskStatusButton.Click();
+            return this;
         }
 
-        public void SwitchTab(Tabs tab)
+        public Homepage SwitchTab(Tabs tab)
         {
             IWebElement tabElement = tab switch
             {
@@ -60,6 +67,7 @@ namespace SeleniumTests.Pages
                 Tabs.Active => driver.FindElement(By.XPath("//a[contains(text(), 'Active')]")),
                 Tabs.Completed => driver.FindElement(By.XPath("//a[contains(text(), 'Completed')]")),
             };
+            return this;
         }
 
         public IEnumerable<IWebElement> GetAllTasks()
