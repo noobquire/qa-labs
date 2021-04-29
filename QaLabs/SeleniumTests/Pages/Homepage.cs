@@ -38,16 +38,17 @@ namespace SeleniumTests.Pages
         public Homepage DeleteTask(string taskName)
         {
             var task = GetAllTasks().FirstOrDefault(t => t.Text == taskName);
-            if (task != null)
+            if (task == null)
             {
-                var actions = new Actions(driver);
-                var selectedTask = GetAllTasks().First(t => t.Text.Contains(taskName));
-                var deleteButton = driver.FindElement(By.XPath($"//div[.//label[contains(text(),'{taskName}')]]//button"));
-                actions.MoveToElement(selectedTask);
-                actions.Click(deleteButton);
-                actions.Build().Perform();
+                throw new ArgumentNullException(taskName);
             }
-            else throw new ArgumentNullException(taskName);
+
+            var actions = new Actions(driver);
+            var selectedTask = GetAllTasks().First(t => t.Text.Contains(taskName));
+            var deleteButton = driver.FindElement(By.XPath($"//div[.//label[contains(text(),'{taskName}')]]//button"));
+            actions.MoveToElement(selectedTask);
+            actions.Click(deleteButton);
+            actions.Build().Perform();
 
             return this;
         }
@@ -67,6 +68,7 @@ namespace SeleniumTests.Pages
                 Tabs.Active => driver.FindElement(By.XPath("//a[contains(text(), 'Active')]")),
                 Tabs.Completed => driver.FindElement(By.XPath("//a[contains(text(), 'Completed')]")),
             };
+            tabElement.Click();
             return this;
         }
 
